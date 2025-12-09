@@ -105,6 +105,8 @@ news-app/
 │
 └─ static/
      └ style.css
+
+
 📌 使用技術
 Python / Flask
 
