@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News App</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+  <script>
+    Vue.config.delimiters = ['[[', ']]'];
+  </script>
+</head>
+
+<body>
+  <div id="app">
+
+    <h1 class="title">News App</h1>
+
+<div class="category-buttons">
+<button @click="loadNews('it')" class="category-btn it" onclick="loadNews('it')">IT</button>
+<button @click="loadNews('sports')"class="category-btn sports" onclick="loadNews('sports')">スポーツ</button>
+<button  @click="loadNews('economy')"class="category-btn economy" onclick="loadNews('economy')">経済</button>
+
+</div>
+
+
+    <p v-if="loading">読み込み中...</p>
+
+    <ul class="article">
+      <li v-for="article in articles" :key="article.link">
+        <h2><a :href="article.link" target="_blank">[[ article.title ]]</a></h2>
+        <p>[[ article.summary ]]</p>
+        <div class="article-tag">[[ article.tag ]]</div>
+      </li>
+    </ul>
+
+  </div>
+
+<script>
+  new Vue({
+    el: '#app',
+    delimiters: ['[[', ']]'],   // ★ これを追加（Jinja と衝突しないようにする）
+    data: {
+      articles: [],
+      loading: false
+    },
+    methods: {
+      loadNews(category) {
+        this.loading = true;
+        fetch(`/news?category=${category}`)
+          .then(res => res.json())
+          .then(data => {
+            this.articles = data;
+            this.loading = false;
+          })
+          .catch(err => {
+            console.error(err);
+            this.loading = false;
+          });
+      }
+    },
+    mounted() {
+      this.loadNews('yahoo_it');
+    }
+  });
+</script>
+
+</body>
+</html>
